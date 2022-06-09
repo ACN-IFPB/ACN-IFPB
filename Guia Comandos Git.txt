@@ -1,0 +1,27 @@
+GUIA RÁPIDO DE COMANDOS DO GIT
+
+Navegar até o diretório do projeto no seu computador,
+caso não exista, crie uma pasta e uma vez dentro dela clone o repositório da web
+ou simplesmente inicie um repositorio ou projeto dentro dela.
+
+1 - Clonar o repositório faça:
+
+git clone git://github.com/adriel-ifpb/repositorio.git
+
+2 - Criar um marcador para o controle de versões (TAG) ou simplesmente criar um marcador
+
+ git tag ( lista todo os marcadores)
+
+3 - Selecionar versão especifica (volta pra versão do projeto) 
+
+git checkout "versão" 
+
+4 - Comparar e visualizar as diferenças entre duas versões do mesmo arquivo ou repositorio
+
+git diff v0.1 v0.2 (Obs: pra sair é só apertar a tecla 'Q')
+
+5 - Consultar o autor de alteração (localizar bugs) 
+
+git blame index.html
+
+
