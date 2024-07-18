@@ -1,0 +1,447 @@
+// variáveis mux5_1;
+  bit[2:0] tb_sel;
+  bit tb_in_5, tb_in_4, tb_in_3, tb_in_2, tb_in_1, tb_in_0;
+  bit tb_out;
+  
+  
+//variáveis cont_BCD;
+  logic tb_clk_amostra, tb_reset;
+  logic tb_limp, tb_hab;
+  logic[3:0] tb_cont_3, tb_cont_2, tb_cont_1, tb_cont_0;
+  
+  logic[3:0] cont_3_ref, cont_2_ref, cont_1_ref, cont_0_ref; 
+  
+   
+  mux5_1 my_mux5_1( .sel(tb_sel), .in_5(tb_in_5), .in_4(tb_in_4), .in_3(tb_in_3), .in_2(tb_in_2), .in_1(tb_in_1), .in_0(tb_in_0), .out_mux(tb_out) );
+  
+//variáveis controle;
+  bit tb_clk_controle, tb_reset;
+  bit tb_arm, tb_limp, tb_hab;
+  
+  temp_controle test(.clk_controle(tb_clk_controle), .reset(tb_reset), .arm(tb_arm), .limp(tb_limp), .hab(tb_hab));
+ 
+//variaveis tb_display;
+  logic tb_reset, tb_arm;
+  logic [3:0] tb_cont_3, tb_cont_2, tb_cont_1, tb_cont_0;
+  logic [6:0] tb_bcd_3, tb_bcd_2, tb_bcd_1, tb_bcd_0;
+  
+  reg_DecodeDisplay tb_display( .reset(tb_reset), .arm(tb_arm), .cont_3(tb_cont_3), .cont_2(tb_cont_2), .cont_1(tb_cont_1), .cont_0(tb_cont_0), .bcd_3(tb_bcd_3), .bcd_2(tb_bcd_2), .bcd_1(tb_bcd_1), .bcd_0(tb_bcd_0) );
+/*
+ //variáveis contDec;
+  	bit clk_in_tb, reset_tb;
+  	bit clk_out_tb;
+  
+  contDec contDec( .clk_in(clk_in_tb), .reset(reset_tb), .clk_out(clk_out_tb)); 
+ */ 
+ 
+  initial begin
+    $monitor("Time: %d - SEL: %b - OUTPUT: %b", $time, tb_sel, tb_out);
+
+    tb_in_5 = 1'b1;
+    tb_in_4 = 1'b0;
+    tb_in_3 = 1'b1;
+    tb_in_2 = 1'b0;
+    tb_in_1 = 1'b1;
+    tb_in_0 = 1'b0;
+
+    #5 tb_sel = 3'b111;
+    #5 tb_sel = 3'b110;
+    #5 tb_sel = 3'b101;
+    #5 tb_sel = 3'b100;
+    #5 tb_sel = 3'b011;
+    #5 tb_sel = 3'b010;
+    #5 tb_sel = 3'b001;
+    #5 tb_sel = 3'b000;
+  end
+
+
+
+  
+  cont_BCD my_cont_BCD( .clk_amostra(tb_clk_amostra), .reset(tb_reset), .limp(tb_limp), .hab(tb_hab), .cont_3(tb_cont_3), .cont_2(tb_cont_2), .cont_1(tb_cont_1), .cont_0(tb_cont_0) );
+  
+  //ref_cont_BCD tb_ref( .clk_amostra(tb_clk_amostra), .reset(tb_reset), .limp(tb_limp), .hab(tb_hab), .cont_3(cont_3_ref), .cont_2(cont_2_ref), .cont_1(cont_1_ref), .cont_0(cont_0_ref) );
+  
+  function void print();
+    $display("DUV");
+    $display(
+      "Time: %d - CLK: %b - RST: %b - Limp: %b - Hab: %b - Bin: %b%b%b%b - Dec: %d%d%d%d",
+      $time, tb_clk_amostra, tb_reset, tb_limp, tb_hab,
+      tb_cont_3, tb_cont_2, tb_cont_1, tb_cont_0,
+      tb_cont_3, tb_cont_2, tb_cont_1, tb_cont_0
+    );
+    $display("Modelo referência:");
+    $display(
+      "Time: %d - CLK: %b - RST: %b - Limp: %b - Hab: %b - Bin: %b%b%b%b - Dec: %d%d%d%d\n",
+      $time, tb_clk_amostra, tb_reset, tb_limp, tb_hab,
+      cont_3_ref, cont_2_ref, cont_1_ref, cont_0_ref,
+      cont_3_ref, cont_2_ref, cont_1_ref, cont_0_ref
+    );
+  endfunction
+  
+  function bit is_different();
+    bit error = 0;
+    assert (cont_3_ref == tb_cont_3) else error = 1;
+    assert (cont_2_ref == tb_cont_2) else error = 1;
+    assert (cont_1_ref == tb_cont_1) else error = 1;
+    assert (cont_0_ref == tb_cont_0) else error = 1;
+    
+    return error;
+  endfunction
+  
+  function void print_error(string error);
+    $display("Erro encontrado no tempo %d durante o teste de `%s`.", $time, error);
+    $display(
+      "Entradas:\CLK: %b\nRST: %b\nLimp: %b\nHab: %b",
+      tb_clk_amostra, tb_reset, tb_limp, tb_hab
+    );
+    $display(
+      "Saídas esperadas:\nBin: %b%b%b%b\nDec: %d%d%d%d",
+      cont_3_ref, cont_2_ref, cont_1_ref, cont_0_ref,
+      cont_3_ref, cont_2_ref, cont_1_ref, cont_0_ref
+    );
+    $display(
+      "Saídas obtidas:\nBin: %b%b%b%b\nDec: %d%d%d%d",
+      tb_cont_3, tb_cont_2, tb_cont_1, tb_cont_0,
+      tb_cont_3, tb_cont_2, tb_cont_1, tb_cont_0
+    );
+  endfunction
+  
+  function bit number_is_nine();
+    return tb_cont_0 == 9;
+  endfunction
+  
+  function bit number_is_multiple_of_ten();
+    return tb_cont_0 == 0;
+  endfunction
+  
+  function bit number_is_ninety_nine();
+    return tb_cont_1 == 9 && tb_cont_0 == 9;
+  endfunction
+  
+  function bit number_is_multiple_of_one_hundred();
+  	return tb_cont_1 == 0 && tb_cont_0 == 0;
+  endfunction
+  
+  function bit number_is_nine_hundred_ninety_nine();
+    return tb_cont_2 == 9 && tb_cont_1 == 9 && tb_cont_0 == 9;
+  endfunction
+  
+  function bit number_is_multiple_of_one_thousand();
+    return tb_cont_2 == 0 && tb_cont_1 == 0 && tb_cont_0 == 0;
+  endfunction
+  
+  begin
+    tb_clk_amostra = 1;
+    tb_reset = 0;
+    tb_limp = 0;
+    tb_hab = 1;
+    
+    #5 tb_clk_amostra = !tb_clk_amostra;
+    
+    tb_reset = 1;
+    
+    $display("\nTestando mudanças do cont_0");
+    while (tb_cont_0 != 9) begin
+      if (is_different()) begin
+        print_error("cont_0");
+        $finish;
+      end
+      else begin
+        #5 tb_clk_amostra = !tb_clk_amostra;
+        print();
+      end
+    end
+    
+    $display("\nTestando mudanças do cont_1");
+    while (tb_cont_1 != 9 || tb_cont_0 != 9) begin
+      if (is_different()) begin
+        print_error("cont_1");
+        $finish;
+      end
+      else begin
+        #5 tb_clk_amostra = !tb_clk_amostra;
+        if (number_is_nine() || number_is_multiple_of_ten())
+          print();
+      end
+    end
+    
+    $display("\nTestando mudanças do cont_2");
+    while (tb_cont_2 != 9 || tb_cont_1 != 9 || tb_cont_0 != 9) begin
+      if (is_different()) begin
+        print_error("cont_1");
+        $finish;
+      end
+      else begin
+        #5 tb_clk_amostra = !tb_clk_amostra;
+        if (number_is_ninety_nine() || number_is_multiple_of_one_hundred())
+          print();
+      end
+    end
+    
+    $display("\nTestando mudanças do cont_3");
+    while (tb_cont_3 != 9 || tb_cont_2 != 9 || tb_cont_1 != 9 || tb_cont_0 != 9) begin
+      if (is_different()) begin
+        print_error("cont_3");
+        $finish;
+      end
+      else begin
+        #5 tb_clk_amostra = !tb_clk_amostra;
+        if (number_is_nine_hundred_ninety_nine() || number_is_multiple_of_one_thousand())
+          print();
+      end
+    end
+    
+    $display("\nTestando overflow");
+    repeat(2) begin
+      if (is_different()) begin
+        print_error("overflow");
+        $finish;
+      end
+      else begin
+        #5 tb_clk_amostra = !tb_clk_amostra;
+        print();
+      end
+    end
+    
+    $display("\nTestando contador desativado");
+    tb_hab = 0;
+    repeat(10) begin
+      if (is_different()) begin
+        print_error("contador desativado");
+        $finish;
+      end
+      else begin
+        #5 tb_clk_amostra = !tb_clk_amostra;
+        #5 print();
+      end
+    end
+    
+    $display("\nTestando reset");
+    tb_hab = 1;
+    repeat(8) begin
+      if (is_different()) begin
+        print_error("reset");
+        $finish;
+      end
+      #5 tb_clk_amostra = !tb_clk_amostra;
+    end
+
+    print();
+    tb_reset = 0;
+    #5 tb_clk_amostra = !tb_clk_amostra;
+    if (is_different()) begin
+      print_error("reset");
+      $finish;
+    end
+    print();
+    
+    $display("\nTestando limp");
+    #5 tb_reset = 1;
+    repeat(10) begin
+      if (is_different()) begin
+        print_error("limp");
+        $finish;
+      end
+      #5 tb_clk_amostra = !tb_clk_amostra;
+    end
+
+    print();
+    #5 tb_limp = 1;
+    #5 tb_clk_amostra = !tb_clk_amostra;
+    if (is_different()) begin
+      print_error("limp");
+      $finish;
+    end
+    print();
+    tb_limp = 0;
+     
+    $display("Teste concluído.\nNenhum erro encontrado.");
+  end
+
+
+
+  
+  begin
+    tb_reset = 1;
+    tb_arm = 1;
+    
+    $display("Testando display 0");
+    for (int i = 0; i <= 15; i++) begin
+      #5 tb_cont_0 = i;
+      #5 $display(
+      	"Time: %d - RST: %b - Hab: %b - Cont_0: %d - BCD_0: %b",
+        $time, tb_reset, tb_arm, tb_cont_0, tb_bcd_0
+      );
+    end
+    
+    $display("\nTestando display 1");
+    for (int i = 0; i <= 15; i++) begin
+      #5 tb_cont_1 = i;
+      #5 $display(
+      	"Time: %d - RST: %b - Hab: %b - Cont_1: %d - BCD_1: %b",
+        $time, tb_reset, tb_arm, tb_cont_1, tb_bcd_1
+      );
+    end
+    
+    $display("\nTestando display 2");
+    for (int i = 0; i <= 15; i++) begin
+      #5 tb_cont_2 = i;
+      #5 $display(
+      	"Time: %d - RST: %b - Hab: %b - Cont_2: %d - BCD_2: %b",
+        $time, tb_reset, tb_arm, tb_cont_2, tb_bcd_2
+      );
+    end
+    
+    $display("\nTestando display 3");
+    for (int i = 0; i <= 15; i++) begin
+      #5 tb_cont_3 = i;
+      #5 $display(
+      	"Time: %d - RST: %b - Hab: %b - Cont_3: %d - BCD_3: %b",
+        $time, tb_reset, tb_arm, tb_cont_3, tb_bcd_3
+      );
+    end
+    
+    $display("\nTestando reset");
+    tb_cont_0 = 4;
+    tb_cont_1 = 4;
+    tb_cont_2 = 4;
+    tb_cont_3 = 4;
+    tb_reset = 0;
+    #5 $display(
+      "Time: %d - RST: %b - Hab: %b - Cont_0: %d - BCD_0: %b",
+      $time, tb_reset, tb_arm, tb_cont_0, tb_bcd_0
+    );
+    $display(
+      "Time: %d - RST: %b - Hab: %b - Cont_1: %d - BCD_1: %b",
+      $time, tb_reset, tb_arm, tb_cont_1, tb_bcd_1
+    );
+    $display(
+      "Time: %d - RST: %b - Hab: %b - Cont_2: %d - BCD_2: %b",
+      $time, tb_reset, tb_arm, tb_cont_2, tb_bcd_2
+    );
+    $display(
+      "Time: %d - RST: %b - Hab: %b - Cont_3: %d - BCD_3: %b",
+      $time, tb_reset, tb_arm, tb_cont_3, tb_bcd_3
+    );
+    
+    $display("\nTestando hab");
+    #5 tb_reset = 1;
+    #5 tb_arm = 0;
+    tb_cont_0 = 4;
+    tb_cont_1 = 4;
+    tb_cont_2 = 4;
+    tb_cont_3 = 4;
+    $display(
+      "Time: %d - RST: %b - Hab: %b - Cont_0: %d - BCD_0: %b",
+      $time, tb_reset, tb_arm, tb_cont_0, tb_bcd_0
+    );
+    $display(
+      "Time: %d - RST: %b - Hab: %b - Cont_1: %d - BCD_1: %b",
+      $time, tb_reset, tb_arm, tb_cont_1, tb_bcd_1
+    );
+    $display(
+      "Time: %d - RST: %b - Hab: %b - Cont_2: %d - BCD_2: %b",
+      $time, tb_reset, tb_arm, tb_cont_2, tb_bcd_2
+    );
+    $display(
+      "Time: %d - RST: %b - Hab: %b - Cont_3: %d - BCD_3: %b",
+      $time, tb_reset, tb_arm, tb_cont_3, tb_bcd_3
+    );
+    
+    $display("\nDisplay 0");
+    for (int i = 0; i <= 5; i++) begin
+      #5 tb_cont_0 = i;
+      #5 $display(
+      	"Time: %d - RST: %b - Hab: %b - Cont_0: %d - BCD_0: %b",
+        $time, tb_reset, tb_arm, tb_cont_0, tb_bcd_0
+      );
+    end
+    
+    $display("\nDisplay 1");
+    for (int i = 0; i <= 5; i++) begin
+      #5 tb_cont_1 = i;
+      #5 $display(
+      	"Time: %d - RST: %b - Hab: %b - Cont_1: %d - BCD_1: %b",
+        $time, tb_reset, tb_arm, tb_cont_1, tb_bcd_1
+      );
+    end
+    
+    $display("\nDisplay 2");
+    for (int i = 0; i <= 5; i++) begin
+      #5 tb_cont_2 = i;
+      #5 $display(
+      	"Time: %d - RST: %b - Hab: %b - Cont_2: %d - BCD_2: %b",
+        $time, tb_reset, tb_arm, tb_cont_2, tb_bcd_2
+      );
+    end
+    
+    $display("\nDisplay 3");
+    for (int i = 0; i <= 5; i++) begin
+      #5 tb_cont_3 = i;
+      #5 $display(
+      	"Time: %d - RST: %b - Hab: %b - Cont_3: %d - BCD_3: %b",
+        $time, tb_reset, tb_arm, tb_cont_3, tb_bcd_3
+      );
+    end
+  end
+
+
+
+ 
+  
+  always #50 tb_clk_controle = ~tb_clk_controle;
+  always #100 tb_reset = 1;
+  
+    
+   begin 
+  	tb_clk_controle = 0;
+    tb_reset = 0;
+    
+    $display(" ---------------------------------------------------- Inicio ----------------------------------------------------");
+    $monitor ($time,"  Clock Controle - TB = %1b  Reset - TB = %1b  Arm - TB = %1b  Limp - TB = %1b  Hab - TB = %1b", tb_clk_controle, tb_reset, tb_arm, tb_limp, tb_hab);
+    
+      
+    #1000	
+    $display(" ---------------------------------------------------- FIM ----------------------------------------------------");
+    $finish;
+    
+  end
+    
+
+
+  always #10 clk_in_tb = ~clk_in_tb;
+
+begin
+  
+  $display("Iniciando...");
+  
+  	reset_tb = 1'b1;
+  
+    $dumpfile("dumb.vcd");
+    $dumpvars(0, cont);
+  
+  	$monitor("clk_in = %1b,reset = %1b,clk_out = %1b",clk_in_tb, reset_tb, clk_out_tb);
+  
+  	#10 clk_in_tb = 1'b1;
+    #10 clk_in_tb = 1'b0;
+    #10000
+  
+  	reset_tb = 1'b0;
+    #1
+  	if ((reset_tb == 0) & (clk_out_tb != 1'b0)) 
+      $display("ERRO!!!! O ocorreu um erro no reset");
+    else begin
+      $display(" Resetando..."); 
+    end
+    
+  
+  	$display("clk_in = %1b,reset = %1b,clk_out = %1b",clk_in_tb, reset_tb, clk_out_tb);
+  
+  
+  $display("FIM");
+	$finish;
+  
+end 
+
+
+endmodule

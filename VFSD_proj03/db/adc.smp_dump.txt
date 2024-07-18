@@ -1,0 +1,5 @@
+
+State Machine - |DE1_SOC_golden_top|controle_adc:myadc|estado
+Name estado.transmitindo 
+estado.convertendo 0 
+estado.transmitindo 1 

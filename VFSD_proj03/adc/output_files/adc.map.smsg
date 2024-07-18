@@ -1,0 +1,3 @@
+Info (10281): Verilog HDL Declaration information at DE1_SOC_golden_top.v(133): object "HEX0" differs only in case from object "hex0" in the same scope File: C:/Users/Adriel Cassimiro/Documents/adc/adc/DE1_SOC_golden_top.v Line: 133
+Info (10281): Verilog HDL Declaration information at DE1_SOC_golden_top.v(134): object "HEX1" differs only in case from object "hex1" in the same scope File: C:/Users/Adriel Cassimiro/Documents/adc/adc/DE1_SOC_golden_top.v Line: 134
+Info (10281): Verilog HDL Declaration information at DE1_SOC_golden_top.v(135): object "HEX2" differs only in case from object "hex2" in the same scope File: C:/Users/Adriel Cassimiro/Documents/adc/adc/DE1_SOC_golden_top.v Line: 135

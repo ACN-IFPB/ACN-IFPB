@@ -1,0 +1,1 @@
+Info (10281): Verilog HDL Declaration information at controle_adc.sv(3): object "adc_sck" differs only in case from object "ADC_SCK" in the same scope File: C:/Users/Adriel Cassimiro/Documents/VFSD-03/controle_adc.sv Line: 3
