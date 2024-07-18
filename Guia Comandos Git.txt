@@ -24,4 +24,28 @@ git diff v0.1 v0.2 (Obs: pra sair é só apertar a tecla 'Q')
 
 git blame index.html
 
+6- Criar branch e alterar o branch o novo branch
 
+git checkout -b {nome_do_branch}
+
+7- Incluir alteração especifica (commit)
+
+git cherry-pick {hash_do_commit}
+
+8- Realizar comprometimento da alteração
+
+git commit
+
+Obs.: É sempre bom incluir comentário ao realizar o commit para simplificar o entendimento, para isso usar os atributo {-a -m""}
+
+Exemplo: git commit -a -m"Comentário do commit aqui"
+
+9- Envio das alterações para o repositório
+
+git push origin {nome_do_branch}
+
+10- Junção de branchs
+
+git merge {nome_branch_que_se_incluído}
+
+Obs.: Esse comando é usado para trás as alterações de um branch para o branch atual. Essa operação pode gerar conflitos caso existam arquivos que foram alterados em ambos os branchs.
