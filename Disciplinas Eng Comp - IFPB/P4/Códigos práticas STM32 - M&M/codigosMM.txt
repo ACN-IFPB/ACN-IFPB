@@ -1,0 +1,68 @@
+/**
+  ******************************************************************************
+  * @file    main.c
+  * @author  Ac6
+  * @version V1.0
+  * @date    01-December-2013
+  * @brief   Default main function.
+  ******************************************************************************
+*/
+
+
+#include "stm32f4xx.h"
+#include "utility.h"
+
+int main(void)
+{
+
+
+	//configuração dos pinos
+		RCC->AHB1ENR |= 1;
+		GPIOA->MODER |= 0b01 << 12;
+
+		Configure_Clock();
+		Delay_Start();
+
+		/*while(1){
+			GPIOA->ODR &= ~(1<<6);
+			Delay_ms(100);
+			GPIOA->ODR |= (1<<6);
+			Delay_ms(1900);
+
+		}
+
+		while(1){
+			GPIOA->ODR &= ~(1<<6);
+			Delay_ms(50);
+			GPIOA->ODR |= (1<<6);
+			Delay_ms(1900);
+
+			GPIOA->ODR &= ~(1<<6);
+			Delay_ms(50);
+			GPIOA->ODR |= (1<<6);
+			Delay_ms(50);
+			GPIOA->ODR &= ~(1<<6);
+			Delay_ms(50);
+			GPIOA->ODR |= (1<<6);
+			Delay_ms(1900);
+
+		}*/
+
+		int hz = 1000;
+		while(1){
+
+			if (hz <= 0){
+				hz = 1000;
+				Delay_ms(2000);
+			}
+
+			GPIOA->ODR &= ~(1<<6);
+			Delay_ms(50);
+			GPIOA->ODR |= (1<<6);
+			Delay_ms(hz);
+			hz = hz - 50;
+
+
+		}
+
+}

@@ -1,0 +1,163 @@
+
+#include "stm32f4xx.h"
+#include "Utility.h"
+
+void questao_04(void);
+void questao_05(void);
+void questao_06(int, int);
+void questao_07(void);
+void questao_08(void);
+void questao_09(void);
+void questao_10(void);
+void questao_11(void);
+void questao_12(void);
+void questao_13(void);
+void questao_14(void);
+void questao_15(void);
+void questao_16(void);
+void questao_17(void);
+
+int t_on =250;
+int t_off =250;
+int t_atual = 0, pausa = 500;
+
+int main(void)
+{
+	/*Configure_Colck();
+	 */
+
+	Delay_Start();
+	RCC ->AHB1ENR |= 1;
+	GPIOA ->MODER |= (0b01 << 12);
+	GPIOA ->MODER |= (0b01 << 14);
+
+	while(1)
+	{
+//		questao_01();
+//		questao_02();
+//		questao_03();
+//		questao_04();
+//		questao_05();
+//		questao_06();
+//		questao_07();
+//		questao_08();
+//		questao_09();
+		questao_10();
+
+//		questao_14();
+//		questao_15();
+
+//		questao_17();
+//		questao_20();
+
+	}
+
+}
+void questao_05(){
+
+	for(int i = 0; i < 4; i++){
+
+		GPIOA ->ODR |= (1 << 6); //apaga led (PA6)
+		Delay_ms(t_off);
+		GPIOA ->ODR &= ~(1 << 6); //acende led (PA6)
+		Delay_ms(t_on);
+	}
+
+	Delay_ms(pausa);
+
+}
+
+void questao_06(int pwm_on, int pwm_off){
+
+		GPIOA ->ODR &= ~(1 << 6); //acende led (PA6)
+		Delay_ms(pwm_on);
+		GPIOA ->ODR |= (1 << 6); //apaga led (PA6)
+		Delay_ms(pwm_off);
+}
+
+void questao_07(){
+
+	int pwm_off =1;
+
+	for(int pwm_on = 10; pwm_on > 0; pwm_on --){
+		GPIOA ->ODR &= ~(1 << 6); //acende led (PA6)
+		Delay_ms(pwm_on);
+		GPIOA ->ODR |= (1 << 6); //apaga led (PA6)
+		Delay_ms(pwm_off);
+		pwm_off = pwm_off +1;
+	}
+
+	pwm_off =10;
+
+		for(int pwm_on = 0; pwm_on < 10; pwm_on ++){
+			GPIOA ->ODR &= ~(1 << 6); //acende led (PA6)
+			Delay_ms(pwm_on);
+			GPIOA ->ODR |= (1 << 6); //apaga led (PA6)
+			Delay_ms(pwm_off);
+			pwm_off = pwm_off -1;
+		}
+
+
+}
+
+void questao_08(){
+
+		GPIOA ->ODR &= ~(1 << 6); //acende led (PA6)
+		GPIOA ->ODR |= (1 << 7); //apaga led (PA6)
+
+		Delay_ms(t_on);
+
+		GPIOA ->ODR |= (1 << 6); //apaga led (PA6)
+		GPIOA ->ODR &= ~(1 << 7); //acende led (PA6)
+
+		Delay_ms(t_off);
+
+}
+
+void questao_09(void){
+
+	GPIOA ->ODR |= (1 << 6); //apaga led (PA6)
+	GPIOA ->ODR |= (1 << 7); //apaga led (PA6)
+
+	Delay_ms(1000);
+
+	GPIOA ->ODR |= (1 << 6); //apaga led (PA6)
+	GPIOA ->ODR &= ~(1 << 7); //acende led (PA6)
+
+	Delay_ms(1000);
+
+	GPIOA ->ODR &= ~(1 << 6); //acende led (PA6)
+	GPIOA ->ODR |= (1 << 7); //apaga led (PA6)
+
+	Delay_ms(1000);
+
+	GPIOA ->ODR &= ~(1 << 6); //acende led (PA6)
+	GPIOA ->ODR &= ~(1 << 7); //acende led (PA6)
+	Delay_ms(1000);
+
+
+}
+
+void questao_10(void){
+
+	int pwm_off = 100;
+
+
+	for(int pwm_on = 1000; pwm_on > 1; pwm_on --){
+
+		GPIOA ->ODR &= ~(1 << 6); //acende led (PA6)
+		GPIOA ->ODR |= (1 << 7); //apaga led (PA6)
+
+		Delay_us(pwm_on);
+
+		GPIOA ->ODR |= (1 << 6); //apaga led (PA6)
+		GPIOA ->ODR &= ~(1 << 7); //acende led (PA6)
+
+		Delay_us(pwm_off);
+		pwm_off = pwm_off +1;
+
+	}
+
+
+
+}
