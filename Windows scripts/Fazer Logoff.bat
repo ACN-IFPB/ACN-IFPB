@@ -1,0 +1,3 @@
+@echo off
+cls
+shutdown -l -t 1

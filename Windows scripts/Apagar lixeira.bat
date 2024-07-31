@@ -1,0 +1,4 @@
+@echo off
+cls
+@echo off
+IF %VAR% == 10 (SET VAR=a) 
